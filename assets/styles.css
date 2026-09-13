@@ -1,0 +1,26 @@
+
+:root{
+  --sv-navy:#12324b; --sv-blue:#1f6f8b; --sv-teal:#2a9d8f; --sv-green:#4f8a5b;
+  --sv-orange:#f4a261; --sv-red:#d65a5a; --sv-bg:#f5f7fa; --sv-card:#ffffff;
+  --sv-text:#1f2937; --sv-muted:#6b7280; --sv-border:#e5e7eb;
+}
+body{background:var(--sv-bg);color:var(--sv-text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+.navbar{background:linear-gradient(110deg,var(--sv-navy),var(--sv-blue));}
+.brand-sub{font-size:.78rem;opacity:.8}.page-wrap{padding-top:92px}.section-title{font-size:1.08rem;font-weight:700;color:var(--sv-navy)}
+.card{border:1px solid var(--sv-border);border-radius:14px;box-shadow:0 4px 18px rgba(17,24,39,.05)}
+.kpi-card{height:100%}.kpi-label{font-size:.78rem;color:var(--sv-muted);text-transform:uppercase;letter-spacing:.04em}
+.kpi-value{font-size:1.55rem;font-weight:800;color:var(--sv-navy)}.kpi-sub{font-size:.78rem;color:var(--sv-muted)}
+.filter-card{position:sticky;top:76px;z-index:10}.chart-box{height:340px}.chart-box.tall{height:410px}
+.table thead th{background:#eef4f8;color:var(--sv-navy);font-size:.8rem;white-space:nowrap}
+.table td{font-size:.83rem;vertical-align:middle}.badge-good{background:#dff3e4;color:#256b38}
+.badge-bad{background:#fde4e4;color:#9e2c2c}.badge-neutral{background:#eef2f7;color:#475569}
+.metric-pill{border:1px solid var(--sv-border);border-radius:999px;padding:.35rem .65rem;background:#fff;font-size:.82rem}
+.insight-item{border-left:4px solid var(--sv-blue);padding:.75rem 1rem;background:#f8fbfd;border-radius:8px}
+.note-box{background:#fff7df;border:1px solid #f6df9b;border-radius:12px;padding:1rem;color:#5f4a11}
+.small-muted{font-size:.8rem;color:var(--sv-muted)}
+.footer{color:var(--sv-muted);font-size:.8rem;padding:28px 0}
+@media(max-width:991px){.page-wrap{padding-top:78px}.filter-card{position:static}.chart-box{height:300px}}
+@media print{
+  .navbar,.filter-card,.no-print,.btn{display:none!important}.page-wrap{padding-top:0}.card{box-shadow:none;break-inside:avoid}
+  body{background:#fff}.container-fluid{max-width:100%}
+}

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sai Vista Water Transparency Dashboard</title>
+  <meta name="description" content="Sai Vista wing-wise water consumption, PCMC supply and tank transparency dashboard.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<nav class="navbar navbar-dark fixed-top shadow-sm">
+  <div class="container-fluid px-lg-4">
+    <div>
+      <a class="navbar-brand fw-bold mb-0" href="#">Sai Vista Water Transparency</a>
+      <div class="brand-sub text-white">Wing-wise consumption • PCMC supply • Main tank visibility</div>
+    </div>
+    <div class="d-flex gap-2 no-print">
+      <button id="exportCsv" class="btn btn-sm btn-light">Export CSV</button>
+      <button id="printReport" class="btn btn-sm btn-outline-light">Print / PDF</button>
+    </div>
+  </div>
+</nav>
+
+<main class="page-wrap">
+<div class="container-fluid px-lg-4">
+
+  <div class="card filter-card mb-4">
+    <div class="card-body py-3">
+      <div class="row g-3 align-items-end">
+        <div class="col-lg-3 col-md-4"><label class="form-label small fw-semibold">Month</label><select id="monthFilter" class="form-select"></select></div>
+        <div class="col-lg-3 col-md-4"><label class="form-label small fw-semibold">Wing</label><select id="wingFilter" class="form-select"><option value="All">All wings</option></select></div>
+        <div class="col-lg-3 col-md-4"><label class="form-label small fw-semibold">Water type</label><select id="categoryFilter" class="form-select"><option value="All">All water types</option></select></div>
+        <div class="col-lg-3 d-flex gap-2"><button id="resetFilters" class="btn btn-outline-secondary w-100">Reset filters</button></div>
+      </div>
+      <div class="mt-3 d-flex flex-wrap gap-2"><span id="reportPeriod" class="metric-pill"></span><span id="coverageText" class="metric-pill"></span></div>
+    </div>
+  </div>
+
+  <section class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="section-title mb-0">Water position at a glance</h2></div>
+    <div class="row g-3">
+      <div class="col-xl col-md-6"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">Selected consumption</div><div id="kpiConsumption" class="kpi-value">—</div><div id="kpiConsumptionSub" class="kpi-sub"></div></div></div></div>
+      <div class="col-xl col-md-6"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">Average daily consumption</div><div id="kpiDaily" class="kpi-value">—</div><div id="kpiDailySub" class="kpi-sub"></div></div></div></div>
+      <div class="col-xl col-md-6"><div id="kpiChangeCard" class="card kpi-card"><div class="card-body"><div class="kpi-label">Daily change vs August</div><div id="kpiChange" class="kpi-value">—</div><div id="kpiChangeSub" class="kpi-sub"></div></div></div></div>
+      <div class="col-xl col-md-6"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">PCMC water received</div><div id="kpiPcmc" class="kpi-value">—</div><div id="kpiPcmcSub" class="kpi-sub"></div></div></div></div>
+      <div class="col-xl col-md-6"><div class="card kpi-card"><div class="card-body"><div class="kpi-label">Daily saving / excess</div><div id="kpiSaving" class="kpi-value">—</div><div id="kpiSavingSub" class="kpi-sub"></div></div></div></div>
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <div class="row g-3">
+      <div class="col-xl-8"><div class="card h-100"><div class="card-body"><h2 class="section-title">Wing-wise consumption by water type</h2><div class="small-muted mb-2">Stacked view of Domestic, Drinking and Flushing consumption for the selected month.</div><div class="chart-box"><canvas id="wingChart"></canvas></div></div></div></div>
+      <div class="col-xl-4"><div class="card h-100"><div class="card-body"><h2 class="section-title">Selected water-type mix</h2><div class="small-muted mb-2">Share of society or selected wing consumption.</div><div class="chart-box"><canvas id="typeChart"></canvas></div></div></div></div>
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <div class="card"><div class="card-body">
+      <h2 class="section-title">Wing-wise detailed segregation</h2>
+      <div class="small-muted mb-3">Litres consumed by each wing. Daily change compares September MTD average/day with August average/day.</div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead><tr><th>Wing</th><th>Domestic</th><th>Drinking</th><th>Flushing</th><th>Selected total</th><th>Aug avg/day</th><th>Sep avg/day</th><th>Daily change</th><th>Daily saving / excess</th></tr></thead>
+          <tbody id="wingTableBody"></tbody>
+        </table>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="mb-4">
+    <div class="row g-3">
+      <div class="col-xl-6"><div class="card h-100"><div class="card-body"><h2 class="section-title">August vs September — fair daily comparison</h2><div class="small-muted mb-2">Average/day avoids misleading comparisons between full August and partial September.</div><div class="chart-box"><canvas id="comparisonChart"></canvas></div></div></div></div>
+      <div class="col-xl-6"><div class="card h-100"><div class="card-body"><h2 class="section-title">Daily consumption trend</h2><div class="small-muted mb-2">Daily readings for the selected month, wing and water type.</div><div class="chart-box"><canvas id="trendChart"></canvas></div></div></div></div>
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <div class="row g-3">
+      <div class="col-xl-6"><div class="card h-100"><div class="card-body"><h2 class="section-title">PCMC supply vs total wing consumption</h2><div class="small-muted mb-2">PCMC inlet sensor readings shown alongside wing-level consumption totals.</div><div class="chart-box"><canvas id="pcmcChart"></canvas></div></div></div></div>
+      <div class="col-xl-6"><div class="card h-100"><div class="card-body"><h2 class="section-title">Main tank movement</h2><div class="small-muted mb-2">Main tank water received and water used/outflow by category.</div><div class="chart-box"><canvas id="tankChart"></canvas></div></div></div></div>
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <div class="card"><div class="card-body">
+      <h2 class="section-title">PCMC & main tank detail</h2>
+      <div class="table-responsive">
+        <table class="table table-hover"><thead><tr><th>Source / tank</th><th>Water received (L)</th><th>Water used / outflow (L)</th><th>Avg level</th><th>Min level</th><th>Max level</th></tr></thead><tbody id="tankTableBody"></tbody></table>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="mb-4">
+    <div class="row g-3">
+      <div class="col-xl-7"><div class="card h-100"><div class="card-body"><h2 class="section-title">Automatic observations</h2><div id="insights"></div></div></div></div>
+      <div class="col-xl-5"><div class="note-box h-100">
+        <div class="fw-bold mb-2">How to interpret this report</div>
+        <div class="small mb-2"><strong>Consumption:</strong> wing-level “Water Used” readings from the uploaded sensor reports.</div>
+        <div class="small mb-2"><strong>PCMC received:</strong> “Water Received” from the PCMC inlet tank report.</div>
+        <div class="small mb-2"><strong>September:</strong> month-to-date data, not a complete month. Compare average/day rather than raw monthly totals.</div>
+        <div class="small"><strong>Leakage caution:</strong> differences among PCMC, main tanks and wing readings are not automatically leakage. Tank-level sensors, timing, tank geometry and simultaneous inflow/outflow can create reconciliation differences.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <div class="card"><div class="card-body">
+      <h2 class="section-title">Transparency & source methodology</h2>
+      <div class="row g-3 small">
+        <div class="col-md-4"><strong>Wing coverage</strong><br>A, B, C, D, E and F wings are included separately for Domestic, Drinking and Flushing water.</div>
+        <div class="col-md-4"><strong>Periods</strong><br>August 2026 and September 2026 month-to-date are available. Coverage days come directly from the consolidated daily exports.</div>
+        <div class="col-md-4"><strong>Data source</strong><br>This static dashboard embeds the consolidated values extracted from the supplied tank and wing Excel sensor exports. No server-side database is required.</div>
+      </div>
+    </div></div>
+  </section>
+
+  <div class="footer text-center">Sai Vista Water Transparency Dashboard • Static GitHub Pages compatible report</div>
+</div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
